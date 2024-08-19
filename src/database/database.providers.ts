@@ -11,7 +11,7 @@ export const databaseProviders = [
         username: 'root',
         password: 'root',
         database: 'graphql_jwt_auth',
-        entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+        entities: [__dirname + '/../**/*.model{.ts,.js}'],
         synchronize: true,
       });
 
