@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { LoginResponse } from './dto/login.response';
 import { LoginInput } from './dto/login.input';
 import { UseGuards } from '@nestjs/common';
-import { User } from 'src/user/user.model';
+import { User } from '@/user/user.model';
 import { RegisterInput } from './dto/register.input';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';

@@ -2,7 +2,9 @@ import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
-@Entity()
+@Entity({
+  name: 'users'
+})
 export class User {
   @PrimaryGeneratedColumn()
   @Field(() => Int)
