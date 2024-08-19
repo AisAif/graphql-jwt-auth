@@ -26,6 +26,6 @@ export class AuthResolver {
   @Query(() => User)
   @UseGuards(JwtAuthGuard)
   async profile(@Context() ctx) {
-    return ctx.req.user;
+    return this.authService.getProfile(ctx.req.user.username);
   }
 }

@@ -54,4 +54,8 @@ export class AuthService {
       user,
     };
   }
+
+  async getProfile(username: string): Promise<User> {
+    return this.usersService.findOne(username);
+  }
 }
