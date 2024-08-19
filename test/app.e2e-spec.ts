@@ -146,4 +146,64 @@ describe('GraphQL (e2e)', () => {
         });
     });
   });
+  describe('login', () => {
+    beforeEach(async () => {
+      await createTestUser(
+        {
+          name: 'ais aif',
+          username: 'ais_aif',
+          password: 'password',
+        },
+        dataSource,
+      );
+    });
+
+    afterEach(async () => {
+      await dataSource.query('DELETE FROM users');
+    });
+
+    it('should success', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          query: `#graphql
+            mutation login {
+              login(loginInput: { username: "ais_aif", password: "password" }) {
+                access_token
+                user {
+                  name
+                  username
+                }
+              }
+            }
+          `,
+        })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data.login.access_token).toBeDefined();
+        });
+    });
+
+    it('should fail when credentials is wrong', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          query: `#graphql
+            mutation login {
+              login(loginInput: { username: "salah", password: "salah" }) {
+                access_token
+                user {
+                  name
+                  username
+                }
+              }
+            }
+          `,
+        })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.errors[0].message).toBe('Unauthorized');
+        });
+    });
+  });
 });
