@@ -5,6 +5,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { createTestUser } from './helpers/user.helper';
+import { getAccessToken } from './helpers/auth.helper';
 
 describe('GraphQL (e2e)', () => {
   let app: INestApplication;
@@ -146,6 +147,7 @@ describe('GraphQL (e2e)', () => {
         });
     });
   });
+
   describe('login', () => {
     beforeEach(async () => {
       await createTestUser(
@@ -203,6 +205,66 @@ describe('GraphQL (e2e)', () => {
         .expect(200)
         .expect((res) => {
           expect(res.body.errors[0].message).toBe('Unauthorized');
+        });
+    });
+  });
+
+  describe('profile', () => {
+    let accessToken: string;
+    beforeEach(async () => {
+      await createTestUser(
+        {
+          name: 'ais aif',
+          username: 'ais_aif',
+          password: 'password',
+        },
+        dataSource,
+      );
+
+      accessToken = await getAccessToken('ais_aif', 'password', app);
+    });
+
+    afterEach(async () => {
+      await dataSource.query('DELETE FROM users');
+    });
+
+    it('should success', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          query: `#graphql
+            query profile {
+              profile {
+                name
+                username
+              }
+            }
+          `,
+        })
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data.profile.name).toBe("ais aif");
+          expect(res.body.data.profile.username).toBe("ais_aif");
+        });
+    });
+
+    it('should fail when unauthorized', () => {
+      return request(app.getHttpServer())
+        .post('/graphql')
+        .send({
+          query: `#graphql
+            query profile {
+              profile {
+                name
+                username
+              }
+            }
+          `,
+        })
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.errors[0].message).toBe("Unauthorized");
         });
     });
   });
