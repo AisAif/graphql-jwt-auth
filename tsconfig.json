@@ -1,5 +1,10 @@
 {
   "compilerOptions": {
+    "paths": {
+      "@/*": ["src/*"],
+      "@test/*": ["test/*"],
+      "@config/*": ["config/*"]
+    },
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
